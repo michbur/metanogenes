@@ -9,7 +9,12 @@ colnames(dat) <- raw_dat[1, ]
 num_ids <- sapply(1L:ncol(dat), function(i) {
   single_col <- dat[, i]
   only_sure <- single_col[single_col != "no data"]
-  !all(is.na(as.numeric(only_sure)))
+  !any(is.na(as.numeric(only_sure)))
 })
 
-dat[, num_ids]
+numeric_dat <- sub(pattern = "no data", replacement = NA, dat[, num_ids])
+storage.mode(numeric_dat) <- "numeric"
+
+final_dat <- data.frame(Name = dat[, "Name"], numeric_dat)
+
+write.csv(final_dat, file = "metanogenes_partial.csv", row.names = FALSE)
