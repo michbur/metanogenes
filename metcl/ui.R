@@ -1,4 +1,6 @@
 library(shiny)
+library(plotly)
+library(rhandsontable)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -9,7 +11,8 @@ shinyUI(fluidPage(
   
   # Show a plot of the generated distribution
   mainPanel(
-    plotOutput("clPlot")
+    rHandsontableOutput("input_table"),
+    plotlyOutput("clPlot", height = "1600px", width = "1600px")
   )
 )
 )
