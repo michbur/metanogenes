@@ -21,7 +21,11 @@ for(single_name in dat[, "Name"]) {
 
 all_files <- list.files("./genes/")
 
-do.call(rbind, lapply(all_files, function(i)
+all_seqs <- do.call(rbind, lapply(all_files, function(i)
   data.frame(organism = strsplit(i, ".fasta", fixed = TRUE)[[1]],
              seq = names(read.fasta(paste0("./genes/", i))))
 ))
+
+
+mutate(all_seqs, address = paste0("https://www.ncbi.nlm.nih.gov/nuccore/", seq)) %>% 
+  write.csv2(row.names = FALSE, file = "all_seqs.csv")
