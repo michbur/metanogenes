@@ -1,0 +1,38 @@
+X1butanol
+dlaczego c("do not feed on", "feeds", "indifferent", "not determined", "no data")
+
+AdditionalGrowthRequierments
+! generally organic compounds
+! Methanosarcina acetivorans dlaczego ma wartość -1
+! no: none czy no data
+
+
+cellShape
+Cocci versus Coccobacillus
+zmienić na tabele z odniesieniami
+
+creator
+positiv i positive
+co różni unknown od not determined
+
+gramReaction
+positiv i positive
+
+h2Andco2
+feedsa
+
+maximumcellGcContent
+dlaczego 0
+
+MinimumGrowthRequierments
+yest extract, -1
+casamino acids, tryptone, yeast extract, or vitamins for growth 
+
+numberPublications
+no data, nd, 0, unavailable, variable
+
+otherATTCStrainNumbers
+uporzadkowac
+
+
+new_name
