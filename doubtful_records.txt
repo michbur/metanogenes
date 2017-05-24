@@ -8,7 +8,6 @@ AdditionalGrowthRequierments
 
 
 cellShape
-Cocci versus Coccobacillus
 zmienić na tabele z odniesieniami
 
 creator
