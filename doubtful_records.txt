@@ -32,3 +32,6 @@ no data, nd, 0, unavailable, variable
 
 otherATTCStrainNumbers
 uporzadkowac
+
+otherDSMStrainNumbers
+czasem bez DSMS
