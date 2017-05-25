@@ -32,6 +32,3 @@ no data, nd, 0, unavailable, variable
 
 otherATTCStrainNumbers
 uporzadkowac
-
-
-new_name
