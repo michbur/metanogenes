@@ -59,18 +59,18 @@ data.frame(old_name = levels(dat_df[["cellShape"]]),
 
 
 data.frame(old_name = levels(dat_df[["creator"]]),
-                        new_name = c("negative", "no data", "no data", "positive", "positive", 
-                                     "unknown (cell lysis)", "variable"))  %>% 
+           new_name = c("negative", "no data", "no data", "positive", "positive", 
+                        "unknown (cell lysis)", "variable"))  %>% 
   write.csv(file = "./changed_cols/creator.csv", row.names = FALSE) 
 
 data.frame(old_name = levels(dat_df[["gramReaction"]]),
-                        new_name = c("negative", "no data", "no data", "positive", "positive", 
-                                     "unknown (cell lysis)", "variable")) %>% 
+           new_name = c("negative", "no data", "no data", "positive", "positive", 
+                        "unknown (cell lysis)", "variable")) %>% 
   write.csv(file = "./changed_cols/gramReaction.csv", row.names = FALSE) 
 
 data.frame(old_name = levels(dat_df[["maximumcellGcContent"]]),
-                        new_name = c("no data", "no data", "no data", "no data", 
-                                     "present", "no data")) %>% 
+           new_name = c("no data", "no data", "no data", "no data", 
+                        "present", "no data")) %>% 
   write.csv(file = "./changed_cols/maximumcellGcContent.csv", row.names = FALSE) 
 
 # Requirements ------------------------------------
@@ -102,8 +102,10 @@ levels(dat_df[["MinimumGrowthRequierments"]]) %>%
                       "tryptone", "tungstate", "tungsten", "no data", "vitamins", 
                       "vitamins", "B12", "yeast extract", "yeast extract")) %>% 
   mutate(original_record = sapply(old_name, function(ith_name) 
-    as.character(dat_df[["MinimumGrowthRequierments"]][grep(ith_name, as.character(dat_df[["MinimumGrowthRequierments"]]))])[1]
-  )) %>% write.csv(file = "./changed_cols/MinimumGrowthRequierments.csv", row.names = FALSE) 
+    as.character(dat_df[["MinimumGrowthRequierments"]][grep(ith_name, as.character(dat_df[["MinimumGrowthRequierments"]]))])[1]),
+    Name = sapply(old_name, function(ith_name) 
+      as.character(dat_df[["Name"]][grep(ith_name, as.character(dat_df[["MinimumGrowthRequierments"]]))])[1])
+  ) %>% write.csv(file = "./changed_cols/MinimumGrowthRequierments.csv", row.names = FALSE) 
 
 
 levels(dat_df[["AdditionalGrowthRequierments"]]) %>%
@@ -130,8 +132,10 @@ levels(dat_df[["AdditionalGrowthRequierments"]]) %>%
                       "trypticase", "tungsten", "vitamins", "tryptophan", "yeast extract", "yeast extract", 
                       "yeast extract")) %>% 
   mutate(original_record = sapply(old_name, function(ith_name) 
-    as.character(dat_df[["AdditionalGrowthRequierments"]][grep(ith_name, as.character(dat_df[["AdditionalGrowthRequierments"]]))])[1]
-  )) %>% write.csv(file = "./changed_cols/AdditionalGrowthRequierments.csv", row.names = FALSE) 
+    as.character(dat_df[["AdditionalGrowthRequierments"]][grep(ith_name, as.character(dat_df[["AdditionalGrowthRequierments"]]))])[1]),
+    Name = sapply(old_name, function(ith_name) 
+      as.character(dat_df[["Name"]][grep(ith_name, as.character(dat_df[["AdditionalGrowthRequierments"]]))])[1])
+  ) %>% write.csv(file = "./changed_cols/AdditionalGrowthRequierments.csv", row.names = FALSE) 
 
 
 levels(dat_df[["otherSubstrate"]]) %>%
@@ -148,13 +152,15 @@ levels(dat_df[["otherSubstrate"]]) %>%
   sort %>%
   data.frame(old_name = ., stringsAsFactors = FALSE) %>% 
   mutate(new_name = c("1-pentanol", "2-pentanol", "3-butanodiol", "alanine", 
-                        "butyrate", "cyclohexanol", "cyclohexanol", "ethyl acetate", 
-                        "formaldehyde", "fructose", "fumarate", "glucose", "H2", "lactate", 
-                        "leucine", "methanetiol", "methanol", "no data", "pyruvate", 
-                        "theobromine", "theophyline", "trimethoxybenzoate", "valerate")) %>% 
+                      "butyrate", "cyclohexanol", "cyclohexanol", "ethyl acetate", 
+                      "formaldehyde", "fructose", "fumarate", "glucose", "H2", "lactate", 
+                      "leucine", "methanetiol", "methanol", "no data", "pyruvate", 
+                      "theobromine", "theophyline", "trimethoxybenzoate", "valerate")) %>% 
   mutate(original_record = sapply(old_name, function(ith_name) 
-    as.character(dat_df[["otherSubstrate"]][grep(ith_name, as.character(dat_df[["otherSubstrate"]]))])[1]
-  )) %>% write.csv(file = "./changed_cols/otherSubstrate.csv", row.names = FALSE) 
+    as.character(dat_df[["otherSubstrate"]][grep(ith_name, as.character(dat_df[["otherSubstrate"]]))])[1]),
+    Name = sapply(old_name, function(ith_name) 
+      as.character(dat_df[["Name"]][grep(ith_name, as.character(dat_df[["otherSubstrate"]]))])[1])) %>% 
+  write.csv(file = "./changed_cols/otherSubstrate.csv", row.names = FALSE) 
 
 as.character(dat_df[["otherATTCStrainNumbers"]]) %>%
   strsplit(", *") %>% unlist %>% table %>% sort
