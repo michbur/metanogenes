@@ -29,3 +29,12 @@ all_seqs <- do.call(rbind, lapply(all_files, function(i)
 
 mutate(all_seqs, address = paste0("https://www.ncbi.nlm.nih.gov/nuccore/", seq)) %>% 
   write.csv2(row.names = FALSE, file = "all_seqs.csv")
+
+# gb genes
+
+for(single_name in dat[, "Name"]) {
+  gene_ids <- entrez_search(db = "nucleotide", term = paste0(single_name, "[ORGN]"))
+  
+  genes <- entrez_fetch(db = "nucleotide", id = gene_ids[["ids"]], rettype = "gb")
+  cat(genes, file = paste0("genes_gb/", single_name, ".gb"))
+}
