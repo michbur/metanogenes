@@ -21,4 +21,8 @@ taxonomies <- lapply(dat[, "Name"], function(single_name) {
 })
 
 data.frame(Name = names(taxonomies), taxonomy = sapply(taxonomies, first)) %>% 
+  mutate(taxonomy = as.character(taxonomy)) %>% 
+  mutate(taxonomy = sapply(taxonomy, function(i) {
+    strsplit(i, "cellular organisms; ")[[1]][[2]]
+  })) %>% 
   write.csv("taxonomies.csv", row.names = FALSE)
