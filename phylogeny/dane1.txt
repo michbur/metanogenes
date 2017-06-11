@@ -1,0 +1,12 @@
+name	val
+czlowiek	1
+neandertalczyk	2
+czlowiek_z_Altaju	3
+szympans_zwyczajny	4
+szympans_karlowaty	5
+goryl_nizinny	6
+orangutan_borneanski	7
+gibon_bialoreki	8
+makak_jawajski	9
+nosacz_sundajski	1
+kapucynka_bialoczelna	2
