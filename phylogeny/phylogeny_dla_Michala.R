@@ -4,21 +4,36 @@ library(ape)
 library(phangorn)
 library(phytools)
 
-setwd("./phylogeny/")
+
 #Phylogeny based on nucleotide sequences
 #Okineko do wklejania sekwencji i okienko do ladowania pliku z przyrownanymi sekwencjami
-seq_nt <- read.dna(file="./phylogeny/homo.fasta.aln", format = "fasta")
 
-#Select a nucleotide substitution model
-#Okienko do wyboru opcji
 #model:"raw", "N", "TS", "TV", "JC69", "K80", "F81", "K81", "F84", "BH87", "T92", "TN93", "GG95", "logdet", "paralin", "indel", "indelblock".
-#Gamma: okienko do wpisywania wartosci domyslnie nic
-#Dla pairwise.deletion checkbox, nazwa: Delete sites with at least one missing data for all sequences
+
 chosen_model <- "F84"
-dist_nt <- dist.dna(seq_nt, model = chosen_model, gamma = FALSE, pairwise.deletion = FALSE)
+
+#Gamma: okienko do wpisywania wartosci domyslnie nic
+chosen_gamma <- FALSE
 
 # tree_type: lista trzech mozliwości (SN1987, G1997, DG2002)
 chosen_tree_type = "SN1987"
+
+
+seq_nt <- try(read.dna(file="./phylogeny/homo.fasta.aln", format = "fasta"), silent = TRUE)
+if(class(seq_nt) != "try-error") {
+  
+} else {
+  
+}
+
+
+#Select a nucleotide substitution model
+#Okienko do wyboru opcji
+#Dla pairwise.deletion checkbox, nazwa: Delete sites with at least one missing data for all sequences
+
+dist_nt <- dist.dna(seq_nt, model = chosen_model, gamma = chosen_gamma, pairwise.deletion = FALSE)
+
+
 tree_funcs <- switch(chosen_tree_type, 
                      SN1987 = list(tree_method = function(x) nj(x)),
                      G1997 = list(tree_method = function(x) bionj(x)),
