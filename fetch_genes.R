@@ -35,6 +35,6 @@ mutate(all_seqs, address = paste0("https://www.ncbi.nlm.nih.gov/nuccore/", seq))
 for(single_name in dat[, "Name"]) {
   gene_ids <- entrez_search(db = "nucleotide", term = paste0(single_name, "[ORGN]"))
   
-  genes <- entrez_fetch(db = "nucleotide", id = gene_ids[["ids"]], rettype = "gb")
-  cat(genes, file = paste0("genes_gb/", single_name, ".gb"))
+  genes <- entrez_fetch(db = "nucleotide", id = gene_ids[["ids"]], rettype = "gbwithparts")
+  cat(genes, file = paste0("genes_gb/", sub(" ", "_", single_name), ".gb"))
 }
