@@ -6,7 +6,7 @@ biocLite("ggtree")
 library(ape)
 library(phangorn)
 library(phytools)
-
+library(ggtree)
 
 # Phylogeny based on nucleotide sequences
 # Okineko do wklejania sekwencji i okienko do ladowania pliku z przyrownanymi sekwencjami
@@ -44,7 +44,7 @@ chosen_B <- 100
 
 seq_nt <- try(read.dna(file = chosen_file, format = "fasta"), silent = TRUE)
 if(class(seq_nt) != "try-error") {
-  dist_nt <- dist.dna(seq_nt, model = chosen_model, 
+  try({dist_nt <- dist.dna(seq_nt, model = chosen_model, 
                       gamma = chosen_gamma, 
                       pairwise.deletion = chosen_deletion)
   
@@ -56,18 +56,27 @@ if(class(seq_nt) != "try-error") {
                                                                           spr = TRUE, 
                                                                           tbr = TRUE)))
   
-  tree <- compute.brlen(tree_funcs[["tree_method"]](dist_nt))
+  tree <- tree_funcs[["tree_method"]](dist_nt)
   
   fboot <- function(x) midpoint.root(tree_funcs[["tree_method"]](dist_nt))
   tb <- fboot(seq_nt)
   bp <- boot.phylo(tb, seq_nt, fboot, B = chosen_B, rooted = FALSE)
+  list(tree = tree,
+       bp = bp)
+  })
 } else {
   "Invalid input"
 }
 
 fort_tree <- fortify(tree)
   
-ggtree(fort_tree, aes(label = label)) +
-  geom_text(hjust = "outward") +
-  scale_x_continuous(expand = c(0, max(nchar(fort_tree[["label"]]), na.rm = TRUE)/46))
+ggtree(fort_tree, branch.length = "branch.length") +
+  #geom_text(hjust = "outward") +
+  geom_tiplab() +
+  ggplot2:::limits(c(0, max(fort_tree[["x"]])*nchar(filter(fort_tree, x == max(x))[["label"]])/13), "x")
+  
+  
+ggplot(fort_tree, aes(x = x, y = y)) +
+  geom_tree() +
+  theme_tree()
 
