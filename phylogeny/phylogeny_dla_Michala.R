@@ -4,7 +4,6 @@ library(ape)
 library(phangorn)
 library(phytools)
 
-setwd("./phylogeny/")
 #Phylogeny based on nucleotide sequences
 #Okineko do wklejania sekwencji i okienko do ladowania pliku z przyrownanymi sekwencjami
 seq_nt <- read.dna(file="./phylogeny/homo.fasta.aln", format = "fasta")

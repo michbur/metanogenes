@@ -1,6 +1,6 @@
 # install.packages(c("ape", "devtools", phangorn", "phytools", "ggplot2", "ggdendro", "dendextend"), repos = "https://cloud.r-project.org/")
-source("https://bioconductor.org/biocLite.R")
-biocLite("ggtree")
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("ggtree")
 
 
 library(ape)
@@ -8,13 +8,19 @@ library(phangorn)
 library(phytools)
 library(ggtree)
 
+
 # Phylogeny based on nucleotide sequences
 # Okineko do wklejania sekwencji i okienko do ladowania pliku z przyrownanymi sekwencjami
 chosen_file <- "./phylogeny/homo.fasta.aln"
 
 #Select a nucleotide substitution model
 # model:"raw", "N", "TS", "TV", "JC69", "K80", "F81", "K81", "F84", "BH87", "T92", "TN93", "GG95", "logdet", "paralin", "indel", "indelblock".
-chosen_model <- "F84"
+chosen_model_DNA <- "F84"
+
+#Select a amino acid substitution model
+# model: "JC69", "F81", "WAG", "JTT", "LG", "Dayhoff", "cpREV", "mtmam", "mtArt", "MtZoa", "mtREV24", "VT","RtREV", "HIVw", "HIVb", "FLU", "Blossum62", "Dayhoff_DCMut", "JTT_DCMut"
+chosen_model_AA <- "F81"
+
 
 # Gamma: okienko do wpisywania wartosci domyslnie nic
 chosen_gamma <- FALSE
@@ -33,6 +39,8 @@ chosen_gamma <- FALSE
 chosen_tree_type = "SN1987"
 
 
+
+
 # Okienko do wyboru opcji
 # Dla pairwise.deletion checkbox, nazwa: Delete sites with at least one missing data for all sequences
 chosen_deletion <- FALSE
@@ -42,41 +50,95 @@ chosen_deletion <- FALSE
 chosen_B <- 100
 
 
+# zmienna wewnętrzna, wartości - DNA dla DNA i AA dla aminokwasów
+seq_type <- "DNA"
+
+
+
+tree_funcs <- switch(chosen_tree_type, 
+                     SN1987 = list(tree_method = function(x) nj(x)),
+                     G1997 = list(tree_method = function(x) bionj(x)),
+                     DG2002 = list(tree_method = function(x) fastme.bal(x, 
+                                                                        nni = TRUE, 
+                                                                        spr = TRUE, 
+                                                                        tbr = TRUE)))
+
+# switch(seq_type, 
+#        DNA = list(read_data = function(x) read.dna(file = x, format = "fasta"),
+#                   calc_dist = function(x) dist.dna(seq_nt, model = chosen_model_dna, 
+#                                                    gamma = chosen_gamma, 
+#                                                    pairwise.deletion = chosen_deletion),
+#                   boot_phyl = function(x) boot.phylo()
+#        ),
+#        aa = list(read_data = function(x) read.aa(file = x, format = "fasta"),
+#                  calc_dist = function(x) dist.ml(seq_nt, model = chosen_model_aa,
+#                                                  shape = chosen_gamma, 
+#                                                  exclude = ifelse(chosen_deletion, "pairwise", 
+#                                                                   "none"), 
+#                                                  k = 1L)
+#        )
+# )
+
+
+
 seq_nt <- try(read.dna(file = chosen_file, format = "fasta"), silent = TRUE)
-if(class(seq_nt) != "try-error") {
-  try({dist_nt <- dist.dna(seq_nt, model = chosen_model, 
-                      gamma = chosen_gamma, 
-                      pairwise.deletion = chosen_deletion)
-  
-  tree_funcs <- switch(chosen_tree_type, 
-                       SN1987 = list(tree_method = function(x) nj(x)),
-                       G1997 = list(tree_method = function(x) bionj(x)),
-                       DG2002 = list(tree_method = function(x) fastme.bal(x, 
-                                                                          nni = TRUE, 
-                                                                          spr = TRUE, 
-                                                                          tbr = TRUE)))
-  
-  tree <- tree_funcs[["tree_method"]](dist_nt)
-  
-  fboot <- function(x) midpoint.root(tree_funcs[["tree_method"]](dist_nt))
-  tb <- fboot(seq_nt)
-  bp <- boot.phylo(tb, seq_nt, fboot, B = chosen_B, rooted = FALSE)
-  list(tree = tree,
-       bp = bp)
+res_tree_cmp <- if(class(seq_nt) != "try-error") {
+  try({
+    dist_nt <- dist.dna(seq_nt, model = chosen_model, 
+                        gamma = chosen_gamma, 
+                        pairwise.deletion = chosen_deletion)
+
+    tree <- tree_funcs[["tree_method"]](dist_nt)
+    
+    fboot <- function(x) tree_funcs[["tree_method"]](dist_nt)
+    tb <- fboot(seq_nt)
+    bp <- boot.phylo(tb, seq_nt, function(xx) tree_funcs[["tree_method"]](dist.dna(xx)), B = chosen_B, rooted = FALSE)
+    
+    bp_tree <- apeBoot(tree, bp)
+    list(bp_tree = bp_tree)
   })
-} else {
-  "Invalid input"
+} 
+
+if(class(res_tree_cmp != "try-error")) {
+  fort_tree <- fortify(bp_tree)
+  fort_tree[["bootstrap"]][fort_tree[["bootstrap"]] < 50] <- NA
+  
+  svg("tmp_name.svg", width = 7, height = 0.45*sum(!is.na(fort_tree[["label"]])), pointsize = 12)
+  ggtree(fort_tree, branch.length = "branch.length") +
+    #geom_text(hjust = "outward") +
+    geom_tiplab() +
+    geom_label(aes(label=bootstrap), size = 3.5, hjust = -0.05, label.size = NA, fill = NA) +
+    geom_treescale() +
+    ggplot2:::limits(c(0, max(fort_tree[["x"]])*nchar(fort_tree[which.max(fort_tree[["x"]]), "label"])/13), "x") 
+  dev.off()
 }
 
-fort_tree <- fortify(tree)
-  
-ggtree(fort_tree, branch.length = "branch.length") +
-  #geom_text(hjust = "outward") +
-  geom_tiplab() +
-  ggplot2:::limits(c(0, max(fort_tree[["x"]])*nchar(filter(fort_tree, x == max(x))[["label"]])/13), "x")
-  
-  
-ggplot(fort_tree, aes(x = x, y = y)) +
-  geom_tree() +
-  theme_tree()
 
+
+seq_nt <- try(read.aa(file="phylogeny/glob.fasta.aln", format = "fasta"), silent = TRUE)
+res_tree_cmp <- if(class(seq_nt) != "try-error") {
+  try({
+    dist_nt <- dist.ml(seq_aa, 
+                       model = chosen_model_aa, 
+                       shape = chosen_gamma, 
+                       exclude = ifelse(chosen_deletion, "pairwise", "none"), k = 1L)
+    
+    dist.dna(seq_nt, model = chosen_model, 
+                        gamma = chosen_gamma, 
+                        pairwise.deletion = chosen_deletion)
+    
+    tree <- tree_funcs[["tree_method"]](dist_nt)
+    
+    fboot <- function(x) tree_funcs[["tree_method"]](dist_nt)
+    tb <- fboot(seq_nt)
+    bp <- boot.phylo(tb, seq_nt, function(xx) tree_funcs[["tree_method"]](dist.dna(xx)), B = chosen_B, rooted = FALSE)
+    
+    bp_tree <- apeBoot(tree, bp)
+    list(bp_tree = bp_tree)
+  })
+} 
+
+dist.ml(seq_nt, model = chosen_model_aa,
+        shape = chosen_gamma,
+        exclude = ,
+        k = 1L)
