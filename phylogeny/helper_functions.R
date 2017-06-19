@@ -1,5 +1,5 @@
 phangornBoot <- function (tree, BStrees, type = "unrooted", bs.col = "black", 
-          bs.adj = NULL, p = 50, frame = "none", ...) {
+                          bs.adj = NULL, p = 50, frame = "none", ...) {
   type <- match.arg(type, c("phylogram", "cladogram", "fan", 
                             "unrooted", "radial"))
   if (type == "phylogram" | type == "cladogram") {
@@ -66,21 +66,25 @@ phyl_aa <- function(seq, dist_fun, tree_method) {
 
 
 seq_fun <- switch(seq_type,
-                  dna = list(read = function(x) read.dna(file = x, format = "fasta"),
-                             dist = function(x) dist.dna(x, model = chosen_model_dna,
-                                                         gamma = chosen_gamma,
-                                                         pairwise.deletion = chosen_deletion),
-                             phyl = function(x) phyl_dna(x, dist_fun = seq_fun[["dist"]], 
-                                                         tree_method = tree_funcs[["tree_method"]])
+                  dna = list(
+                    read_fasta = function(x) readDNAStringSet(x, format="fasta"),
+                    read = function(x) read.dna(file = x, format = "fasta"),
+                    dist = function(x) dist.dna(x, model = chosen_model_dna,
+                                                gamma = chosen_gamma,
+                                                pairwise.deletion = chosen_deletion),
+                    phyl = function(x) phyl_dna(x, dist_fun = seq_fun[["dist"]], 
+                                                tree_method = tree_funcs[["tree_method"]])
                   ),
-                  aa = list(read = function(x) read.aa(file = x, format = "fasta"),
-                            dist = function(x) dist.ml(x, model = chosen_model_aa,
-                                                       shape = chosen_gamma,
-                                                       exclude = ifelse(chosen_deletion, "pairwise",
-                                                                        "none"),
-                                                       k = 1L),
-                            phyl = function(x) phyl_aa(x, dist_fun = seq_fun[["dist"]], 
-                                                       tree_method = tree_funcs[["tree_method"]])
+                  aa = list(
+                    read_fasta = function(x) readAAStringSet(x, format="fasta"),
+                    read = function(x) read.aa(file = x, format = "fasta"),
+                    dist = function(x) dist.ml(x, model = chosen_model_aa,
+                                               shape = chosen_gamma,
+                                               exclude = ifelse(chosen_deletion, "pairwise",
+                                                                "none"),
+                                               k = 1L),
+                    phyl = function(x) phyl_aa(x, dist_fun = seq_fun[["dist"]], 
+                                               tree_method = tree_funcs[["tree_method"]])
                   )
 )
 

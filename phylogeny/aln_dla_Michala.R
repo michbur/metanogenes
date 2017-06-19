@@ -3,7 +3,7 @@ biocLite("msa")
 library("msa")
 
 #For nucleotide sequences
-sek=readDNAStringSet("Homo.fasta", format="fasta")
+sek=readAAStringSet("./phylogeny/glob.fasta", format="fasta")
 
 #For amino acid sequences
 sek=readAAStringSet("phylogeny/Methanobacterium_arcticum.gb.aa", format="fasta")
@@ -13,17 +13,14 @@ names(slot(sek, "ranges")) <- lapply(strsplit(names(slot(sek, "ranges")), "|", f
 names(slot(sek, "ranges")) <- gsub("|[|]+", "|", names(slot(sek, "ranges")), fixed = TRUE)
 
 
-aln=msa(sek, "ClustalOmega")
+aln=msa(sek, "ClustalW")
 #Opcje do wyboru: zamiast "ClustalOmega" mo?e by? "ClustalW" i "Muscle"
 
 #system.file("tex", "texshade.sty", package="msa")
 #msaPrettyPrint(aln, output="pdf", showNames="left", showLogo="none", askForOverwrite=FALSE, verbose=FALSE)
 
-install.packages("tools")
-library("tools")
 
 msaPrettyPrint(aln, output="tex", showNames="left", showLogo="top", shadingModeArg="chemical", consensusThreshold=50, logoColors="chemical", shadingMode="functional")
-texi2pdf("aln.tex", clean=TRUE)
 
 #Opcje dla:
 #Okienko do wpisywania wartosci: Consensus threshold: consensusThreshold=50

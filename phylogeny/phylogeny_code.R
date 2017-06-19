@@ -2,7 +2,7 @@
 # source("https://bioconductor.org/biocLite.R")
 # biocLite("msa", "ggtree")
 
-
+library(msa)
 library(ape)
 library(phangorn)
 library(phytools)
