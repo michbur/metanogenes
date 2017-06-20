@@ -57,7 +57,7 @@ chosen_file <- "./phylogeny/glob.fasta.aln"
 seq_type <- "dna"
 seq_type <- "aa"
 
-source("phylogeny/helper_functions.R")
+source("./phylogeny/helper_functions.R")
 
 seq_aln <- try(seq_fun[["read"]](chosen_file), silent = TRUE)
 res_tree_cmp <- seq_fun[["phyl"]](seq_aln)

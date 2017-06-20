@@ -3,7 +3,7 @@ biocLite("msa")
 library("msa")
 
 #For nucleotide sequences
-sek=readAAStringSet("./phylogeny/glob.fasta", format="fasta")
+sek <- readAAStringSet("./phylogeny/glob.fasta", format="fasta")
 
 #For amino acid sequences
 sek=readAAStringSet("phylogeny/Methanobacterium_arcticum.gb.aa", format="fasta")
