@@ -1,6 +1,7 @@
 library(ggplot2)
 library(plotly)
 library(dplyr)
+library(pbapply)
 
 dat <- read.csv("./featureVisualisation/visual_data.csv")
 
@@ -13,13 +14,13 @@ color_palettes <- list(A = scale_color_continuous(high = "blue", low = "#FF0000"
 
 
 lapply(c("A", "B"), function(single_palette) 
-  lapply(colnames(dat)[-1][1L:5], function(VarX) 
-    lapply(colnames(dat)[-1][1L:5], function(VarY) 
-      lapply(colnames(dat)[-1][1L:5], function(VarCol) {
-        gg_plot <- ggplot(dat, aes_string(x = VarX, 
-                                          y = VarY, 
-                                          color = VarCol,
-                                          text = "Name")) +
+  pblapply(colnames(dat)[-1], function(VarX) 
+    lapply(colnames(dat)[-1], function(VarY) 
+      lapply(colnames(dat)[-1], function(VarCol) {
+        gg_plot <- ggplot(dat[, c("Name", VarX, VarY, VarCol)], aes_string(x = VarX, 
+                                               y = VarY, 
+                                               color = VarCol,
+                                               text = "Name")) +
           geom_point(size = 2) + 
           theme_bw() +
           color_palettes[[single_palette]]
@@ -27,10 +28,10 @@ lapply(c("A", "B"), function(single_palette)
         gg_plotly <- plotly_build(gg_plot)
         
         file_name <- paste0(getwd(), "/FV/", single_palette, "/", VarX, "_", VarY, "_", VarCol, ".html")
-        file_name_rm <- paste0(getwd(), "/FV/", single_palette, "/", VarX, "_", VarY, "_", VarCol, "_files")
         
-        htmlwidgets::saveWidget(gg_plotly, file_name)
-        unlink(file_name_rm, recursive = TRUE)
+        htmlwidgets::saveWidget(as_widget(gg_plotly), file_name, 
+                                selfcontained = FALSE, 
+                                libdir = paste0(getwd(), "/FV/", single_palette, "/plotly_files"))
         
       })
     )
