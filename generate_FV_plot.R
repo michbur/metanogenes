@@ -6,11 +6,11 @@ library(pbapply)
 dat <- read.csv("./featureVisualisation/visual_data.csv")
 
 VarX <- colnames(dat)[-1][1]
-VarY <- colnames(dat)[-1][2]
+VarY <- colnames(dat)[-1][8]
 VarCol <- colnames(dat)[-1][3]
 
 color_palettes <- list(A = scale_color_continuous(high = "blue", low = "#FF0000", na.value = "black"),
-                       B = scale_color_continuous(high = "#d17312", low = "#04d1b2", na.value = "black"))
+                       B = scale_color_continuous(low = "#d17312", high = "#04d1b2", na.value = "black"))
 
 
 lapply(c("A", "B"), function(single_palette) 
