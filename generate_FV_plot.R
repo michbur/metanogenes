@@ -5,25 +5,41 @@ library(pbapply)
 
 dat <- read.csv("./featureVisualisation/visual_data.csv")
 
+nice_names <- readLines("full_names.txt") %>% 
+  strsplit('<OPTION value=\"', fixed = TRUE) %>% 
+  first %>% 
+  strsplit('\" > ', fixed = TRUE) %>% 
+  unlist %>% 
+  strsplit('\t\t\t\t\t', fixed = TRUE) %>% 
+  unlist %>% 
+  matrix(ncol = 2, byrow = TRUE) %>% 
+  data.frame(row.names = .[, 1])
+
 VarX <- colnames(dat)[-1][1]
-VarY <- colnames(dat)[-1][8]
+VarY <- colnames(dat)[-1][18]
 VarCol <- colnames(dat)[-1][3]
 
-color_palettes <- list(A = scale_color_continuous(high = "blue", low = "#FF0000", na.value = "black"),
-                       B = scale_color_continuous(low = "#d17312", high = "#04d1b2", na.value = "black"))
+color_palettes <- list(A = c(high = "blue", low = "#FF0000"),
+                       B = c(low = "#d17312", high = "#04d1b2"))
 
 
 lapply(c("A", "B"), function(single_palette) 
   pblapply(colnames(dat)[-1], function(VarX) 
     lapply(colnames(dat)[-1], function(VarY) 
       lapply(colnames(dat)[-1], function(VarCol) {
+        pal <- color_palettes[[single_palette]]
+          
         gg_plot <- ggplot(dat[, c("Name", VarX, VarY, VarCol)], aes_string(x = VarX, 
                                                y = VarY, 
                                                color = VarCol,
                                                text = "Name")) +
           geom_point(size = 2) + 
           theme_bw() +
-          color_palettes[[single_palette]]
+          scale_x_continuous(nice_names[VarX, "X2"]) +
+          scale_y_continuous(nice_names[VarY, "X2"]) +
+          scale_color_continuous(nice_names[VarCol, "X2"], 
+                                 high = pal[1], low = pal[2],
+                                 na.value = "black")
         
         gg_plotly <- plotly_build(gg_plot)
         
