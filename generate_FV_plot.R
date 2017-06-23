@@ -35,9 +35,9 @@ lapply(c("A", "B"), function(single_palette)
                                                text = "Name")) +
           geom_point(size = 2) + 
           theme_bw() +
-          scale_x_continuous(nice_names[VarX, "X2"]) +
-          scale_y_continuous(nice_names[VarY, "X2"]) +
-          scale_color_continuous(nice_names[VarCol, "X2"], 
+          scale_x_continuous(as.character(nice_names[VarX, "X2"])) +
+          scale_y_continuous(as.character(nice_names[VarY, "X2"])) +
+          scale_color_continuous(as.character(nice_names[VarCol, "X2"]),
                                  high = pal[1], low = pal[2],
                                  na.value = "black")
         
