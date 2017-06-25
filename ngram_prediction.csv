@@ -1,0 +1,15 @@
+"feature_name","error"
+"GrowthDoublingTime",43.5753477459461
+"GrowthRate",0.471226302015945
+"maximalGrowthTemperature",13.8549669210889
+"maximumGrowthNACL",0.678441044029524
+"maximumGrowthPH",0.79652942785212
+"minimalGrowthTemperature",13.5703982527328
+"minimumGrowthNACL",0.148716396194842
+"minimumGrowthPH",0.645584819321533
+"optimalGrowthNACLMaximal",0.476918331934865
+"optimalGrowthNACLMinimal",0.303257938740693
+"optimalGrowthPHMaximal",0.713266164078445
+"optimalGrowthPHMinimal",0.648348966121736
+"optimalGrowthTemperatureMaximal",12.8557710143143
+"optimalGrowthTemperatureMinimal",13.5838978666909
