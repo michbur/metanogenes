@@ -43,6 +43,18 @@ lapply(c("A", "B"), function(single_palette)
         
         gg_plotly <- plotly_build(gg_plot)
         
+        #attr(gg_plotly[["x"]][["data"]][[1]][["text"]], "apiSrc")
+        
+        text_dat <- strsplit(gg_plotly[["x"]][["data"]][[1]][["text"]], "<br />", fixed = TRUE) %>% 
+          do.call(rbind, .)
+          
+        gg_plotly[["x"]][["data"]][[1]][["text"]] <- matrix(c(text_dat[, 2],
+                                                              gsub(VarCol, nice_names[VarCol, "X2"], text_dat[, 1]),
+                                                              gsub(VarX, nice_names[VarX, "X2"], text_dat[, 3]),
+                                                              gsub(VarY, nice_names[VarY, "X2"], text_dat[, 4])
+        ), ncol = 4) %>% 
+          apply(1, function(i) paste0(i, collapse = "<br />"))
+        
         file_name <- paste0(getwd(), "/FV/", single_palette, "/", VarX, "_", VarY, "_", VarCol, ".html")
         
         htmlwidgets::saveWidget(as_widget(gg_plotly), file_name, 
