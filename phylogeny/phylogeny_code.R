@@ -8,6 +8,28 @@ library(phangorn)
 library(phytools)
 library(ggtree)
 
+source("https://bioconductor.org/biocLite.R")
+biocLite("msa")
+library("msa")
+
+#For nucleotide sequences
+sek <- readAAStringSet("./phylogeny/glob.fasta", format="fasta")
+
+#For amino acid sequences
+sek=readAAStringSet("phylogeny/Methanobacterium_arcticum.gb.aa", format="fasta")
+
+process_aln_files <- function(x) {
+  names(slot(x, "ranges")) <- lapply(strsplit(names(slot(x, "ranges")), "|", fixed = TRUE), 
+                                       function(i) paste0(i[1L:4], collapse = "|"))
+  names(slot(x, "ranges")) <- gsub("|[|]+", "|", names(slot(x, "ranges")), fixed = TRUE)
+  x
+}
+
+chosen_aln_method <- "ClustalW"
+  
+full_aln <- msa(sek, chosen_aln_method)
+
+msaConvert(full_aln, type=c("seqinr::alignment"))
 
 #Select a nucleotide substitution model
 # model:"raw", "N", "TS", "TV", "JC69", "K80", "F81", "K81", "F84", "BH87", "T92", "TN93", "GG95", "logdet", "paralin", "indel", "indelblock".
