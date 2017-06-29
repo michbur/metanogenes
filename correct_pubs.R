@@ -1,6 +1,6 @@
 library(dplyr)
 
-tmp <- readxl::read_excel("baza metanogenów ze strony.xlsx") %>% 
+tmp <- readxl::read_excel("correct_pubs.xlsx") %>% 
   select(organism, `correct publication`, `correct publication link`) %>% 
   rename(Name = organism)
 

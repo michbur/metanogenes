@@ -20,12 +20,12 @@ for(single_name in dat[, "Name"]) {
   
   if(gene_ids[["count"]] > 0) {
     genes <- entrez_fetch(db = "nucleotide", id = gene_ids[["ids"]], rettype = "fasta")
-    cat(genes, file = paste0("genomes_gb/", sub(" ", " ", single_name), ".fasta"))
+    cat(genes, file = paste0("mcrA/", sub(" ", " ", single_name), ".fasta"))
   }
 }
 
-ngrams_matrix <- do.call(rbind, pblapply(list.files("genomes_gb/"), function(single_file) {
-  seqs <- read.fasta(paste0("genomes_gb/", single_file))
+ngrams_matrix <- do.call(rbind, pblapply(list.files("mcrA/"), function(single_file) {
+  seqs <- read.fasta(paste0("mcrA/", single_file))
   
   better_seqs <- seqs[lapply(seqs, table) %>% sapply(length) > 1]
   
@@ -43,7 +43,7 @@ cont_feats <- c("GrowthDoublingTime", "GrowthRate", "maximalGrowthTemperature",
                 "optimalGrowthTemperatureMinimal")
 
 cont_preds <- lapply(cont_feats, function(single_trait){
-           pred_dat <- data.frame(Name = sub(".fasta", "", list.files("genomes_gb/"), fixed = TRUE),
+           pred_dat <- data.frame(Name = sub(".fasta", "", list.files("mcrA/"), fixed = TRUE),
                                   ngrams_matrix) %>% 
              inner_join(select_(num_vals, "Name", single_trait)) %>% 
              na.omit
@@ -59,6 +59,23 @@ cont_preds <- lapply(cont_feats, function(single_trait){
            
            sqrt(mean(res[["measures.test"]][, "mse"]))
          })
+
+pred_list <- lapply(cont_feats, function(single_trait){
+  pred_dat <- data.frame(Name = sub(".fasta", "", list.files("mcrA/"), fixed = TRUE),
+                         ngrams_matrix) %>% 
+    inner_join(select_(num_vals, "Name", single_trait)) %>% 
+    na.omit
+  
+  predict_par <- makeRegrTask(id = "Temp", 
+                              data = select(pred_dat, - Name), target = single_trait)
+  
+  learnerRF <- makeLearner("regr.randomForest")
+  
+  list(task = predict_par, model = train(learnerRF, predict_par))
+})
+
+save(pred_list, file = "./NGramAnalyzer/pred_list.RData")
+
 
 library(xlsx)
 
