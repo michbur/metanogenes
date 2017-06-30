@@ -7,7 +7,8 @@ library(mlr)
 options(shiny.maxRequestSize=10*1024^2)
 
 options(DT.options = list(dom = "Brtip",
-                          buttons = c("copy", "csv", "excel", "print")
+                          buttons = c("copy", "csv", "excel", "print"),
+                          pageLength = 15
 ))
 
 my_DT <- function(x)
@@ -54,14 +55,11 @@ shinyServer(function(input, output) {
           input_sequences <- read_txt(textConnection(input[["text_area"]]))
     })
     
-    if(exists("input_sequences")) {
-      tags$p(HTML("<h3><A HREF=\"javascript:history.go(0)\">Start a new query</A></h3>"))
-    }
   })
   
   output$pred_table <- DT::renderDataTable({
     pred_df <- prediction()
-
+    
     formatRound(my_DT(pred_df), 1L:nrow(pred_df), 2)
   })
   
@@ -81,7 +79,8 @@ shinyServer(function(input, output) {
       
     } else {
       tabPanel(title = "Sequence output",
-        DT::dataTableOutput("pred_table")
+               DT::dataTableOutput("pred_table"),
+               tags$p(HTML("<h3><A HREF=\"javascript:history.go(0)\">Start a new query</A></h3>"))
       )
     }
   })

@@ -23,6 +23,7 @@ pred_vals <- function(models, ngrams, seq_names) {
     mutate(Property = nice) %>% 
     select(-nice)
 
+  res <- res[c(1, 2, 6, 3, 14L:13, 8, 5, 12:11, 7, 4, 10L:9), ]
   rownames(res) <- NULL
   colnames(res)[-1] <- seq_names
   
