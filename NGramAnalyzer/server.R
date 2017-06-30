@@ -1,6 +1,8 @@
 library(shiny)
 library(DT)
 library(biogram)
+library(AmyloGram)
+library(mlr)
 
 options(shiny.maxRequestSize=10*1024^2)
 
@@ -33,7 +35,9 @@ shinyServer(function(input, output) {
         #dummy error, just to stop further processing
         stop("Too many sequences.")
       } else {
-        pred_vals(pred_list, extract_ngrams(input_sequences))
+        pred_vals(pred_list, 
+                  extract_ngrams(input_sequences), 
+                  names(input_sequences))
       }
     } else {
       NULL
@@ -57,9 +61,8 @@ shinyServer(function(input, output) {
   
   output$pred_table <- DT::renderDataTable({
     pred_df <- prediction()
-    browser()
-    colnames(pred_df)
-    formatRound(my_DT(pred_df), 2, 1L:nrow(pred_df))
+
+    formatRound(my_DT(pred_df), 1L:nrow(pred_df), 2)
   })
   
   
@@ -77,7 +80,7 @@ shinyServer(function(input, output) {
       
       
     } else {
-      tabsetPanel(
+      tabPanel(title = "Sequence output",
         DT::dataTableOutput("pred_table")
       )
     }
