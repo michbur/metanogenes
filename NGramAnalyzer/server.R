@@ -3,6 +3,7 @@ library(DT)
 library(biogram)
 library(AmyloGram)
 library(mlr)
+library(dplyr)
 
 options(shiny.maxRequestSize=10*1024^2)
 
