@@ -28,7 +28,7 @@ ngrams_matrix <- do.call(rbind, pblapply(list.files("mcrA/"), function(single_fi
   seqs <- read.fasta(paste0("mcrA/", single_file))
   
   better_seqs <- seqs[lapply(seqs, table) %>% sapply(length) > 1]
-  
+
   lapply(better_seqs, function(single_seq) single_seq[single_seq != "n"]) %>% 
     list2matrix() %>%
     count_ngrams(4, u = c("a", "c", "g", "t"), scale = TRUE) %>% 
@@ -71,7 +71,7 @@ pred_list <- lapply(cont_feats, function(single_trait){
   
   learnerRF <- makeLearner("regr.randomForest")
   
-  list(task = predict_par, model = train(learnerRF, predict_par))
+  train(learnerRF, predict_par)
 })
 
 save(pred_list, file = "./NGramAnalyzer/pred_list.RData")
