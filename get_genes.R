@@ -79,5 +79,21 @@ save(pred_list, file = "./NGramAnalyzer/pred_list.RData")
 
 library(xlsx)
 
-data.frame(feature_name = cont_feats, error = unlist(cont_preds)) %>% 
-  write.xlsx(file = "ngram_prediction.xlsx", row.names = FALSE)
+nice_names <- readLines("full_names.txt") %>% 
+  strsplit('<OPTION value=\"', fixed = TRUE) %>% 
+  first %>% 
+  strsplit('\" > ', fixed = TRUE) %>% 
+  unlist %>% 
+  strsplit('\t\t\t\t\t', fixed = TRUE) %>% 
+  unlist %>% 
+  matrix(ncol = 2, byrow = TRUE) %>% 
+  data.frame(row.names = .[, 1]) %>% 
+  rename(Property = X1, nice = X2)
+
+
+data.frame(Property = cont_feats, Error = unlist(cont_preds)) %>% 
+  mutate(Error = round(Error, 2)) %>%
+  inner_join(nice_names) %>% 
+  mutate(Property = nice) %>% 
+  select(-nice) %>% 
+  write.csv(file = "res.csv")
